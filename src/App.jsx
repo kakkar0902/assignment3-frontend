@@ -1,7 +1,17 @@
-import AdminLayout from "./components/layouts/AdminLayout";
+import { useEffect } from "react";
 
-const App = () => {
-  return <AdminLayout />;
-};
+function Books() {
+  // retrieve the books data from API
+  useEffect(() => {
+    // fetch the books data from the API
+  }, []);
 
-export default App
+  return (
+    <div>
+      <h1 className="text-2xl font-bold">Books</h1>
+      <p>Welcome to the admin Books.</p>
+    </div>
+  );
+}
+
+export default Books;
