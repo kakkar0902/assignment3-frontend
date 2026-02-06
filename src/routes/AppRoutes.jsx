@@ -12,17 +12,18 @@ import Books from "../pages/Books";
 const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<Navigate to="/admin/home" replace />} />
-
     <Route path="/admin" element={<App />}>
-      <Route index element={<Navigate to="home" replace />} />
       <Route path="home" element={<Dashboard />} />
       <Route path="user-roles" element={<UserRoles />} />
       <Route path="user-management" element={<UserManagement />} />
       <Route path="auto-response" element={<AutoResponse />} />
       <Route path="customers" element={<Customers />} />
+       <Route index element={<CustomersTable />} />
+       <Route path="add" element={<AddCustomersForm />} />
+       </Route>
       <Route path="subscriptions" element={<Subscriptions />} />
       <Route path="books" element={<Books />} />
-    </Route>
+   
   </Routes>
 );
 
