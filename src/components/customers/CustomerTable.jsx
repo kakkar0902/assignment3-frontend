@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useOutletContext } from 'react-router-dom';
@@ -36,7 +36,7 @@ function CustomerTable() {
                 >
                     + Add Customer
                 </button> */}
-                <Link>
+                <Link
                 style={{
                         padding: '0.4rem 1.2rem',
                         background: '#1976d2',
@@ -47,7 +47,7 @@ function CustomerTable() {
                         fontSize: 15,
                         cursor: 'pointer',
                     }}
-                    to={"/admin/customers/add"}
+                    to={"/admin/customers/add"}>
                 
                     + Add Customer
                 </Link>

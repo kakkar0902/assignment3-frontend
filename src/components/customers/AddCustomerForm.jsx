@@ -56,7 +56,7 @@ function processData(data){
   return (
     <div className="add-customer-form-container" style={{ maxWidth: 500, margin: '2rem auto', padding: '2rem', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Add New Customer</h2>
-      <form onSubmit={handleSubmit()}>  
+      <form onSubmit={handleSubmit(processData)}>  
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="firstName" style={{ display: 'block', marginBottom: 4 }}>First Name</label>
           <input {...register("firstName", { required: "First name is required" })} id='firstName' type="text" name="firstName" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }} />
