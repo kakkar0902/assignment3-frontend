@@ -1,6 +1,7 @@
-import { data, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { QueryClient, useMutation, useQueryClient} from '@tanstack/react-query';    
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 //import { useState } from 'react';
 
 const AddCustomerForm = () => {
@@ -8,27 +9,28 @@ const AddCustomerForm = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm() 
 
-  const mutation = useMutation({
-    mutationFn: (newCustomer) => {
-       fetch('http://localhost:3000/customers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-      return reesponse.json() 
-    },
-      
-    onSuccess: () => {
-     console.log('Mutation was successful')
-     QueryClient.invalidateQueries({ queryKey: ['customerCache'] })
-      navigate('/admin/customers')
-    },
-    onError: (error) => {
-      console.error('Mutation error')
-    }
-  });
+  const queryClient = useQueryClient();
+
+const mutation = useMutation({
+  mutationFn: async (newCustomer) => {
+    const response = await fetch("http://localhost:3000/customers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newCustomer),
+    });
+
+    return response.json();
+  },
+
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["customerCache"] });
+    navigate("/admin/customers");
+  },
+
+  onError: (error) => {
+    console.error(error);
+  },
+});
 
   // const [firstName, setFirstName] = useState('')
  // const [lastName, setLastName] = useState('')
@@ -79,7 +81,7 @@ function processData(data){
           </select>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
-          <button type="submit" style={{ flex: 1, padding: 10, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 16, cursor: 'pointer' }} disabled>
+          <button type="submit" style={{ flex: 1, padding: 10, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 16, cursor: 'pointer' }}>
             Add Customer
           </button>
           <button

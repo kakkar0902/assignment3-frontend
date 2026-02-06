@@ -1,7 +1,7 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useOutletContext } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { useOutletContext } from 'react-router-dom';
+
 
 
 function CustomerTable() {
@@ -21,7 +21,7 @@ function CustomerTable() {
             maxWidth: 900,
         }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-               {/* <button
+                {/* <button
                     style={{
                         padding: '0.4rem 1.2rem',
                         background: '#1976d2',
@@ -37,7 +37,7 @@ function CustomerTable() {
                     + Add Customer
                 </button> */}
                 <Link
-                style={{
+                    style={{
                         padding: '0.4rem 1.2rem',
                         background: '#1976d2',
                         color: '#fff',
@@ -48,7 +48,7 @@ function CustomerTable() {
                         cursor: 'pointer',
                     }}
                     to={"/admin/customers/add"}>
-                
+
                     + Add Customer
                 </Link>
             </div>
@@ -65,28 +65,37 @@ function CustomerTable() {
                 </thead>
                 <tbody>
                     {
-                        customers.map((customer, idx) => {
-                            return (
-                                <tr key={customer.id} style={{ background: idx % 2 === 0 ? '#fafbfc' : '#fff' }}>
-                                    <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}>{customer.firstName}</td>
-                                    <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}>{customer.lastName}</td>
-                                    <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}>{customer.email}</td>
-                                    <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}>{customer.status}</td>
-                                    <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee', textAlign: 'center' }}>
-                                        <button style={{ marginRight: 6, padding: '4px 10px', background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 13, cursor: 'pointer' }} title="Edit" disabled>
-                                            <FontAwesomeIcon icon={faPenToSquare} />
-                                        </button>
-                                        <button style={{ marginRight: 6, padding: '4px 10px', background: '#d32f2f', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 13, cursor: 'pointer' }} title="Delete" disabled>
-                                            <FontAwesomeIcon icon={faTrash} />
-                                        </button>
-                                        <button style={{ padding: '4px 10px', background: '#888', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 13, cursor: 'pointer' }} title="Details" disabled>
-                                            <FontAwesomeIcon icon={faCircleInfo} />
-                                        </button>
-                                    </td>
-                                    <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}></td>
-                                </tr>
-                            );
-                        })
+                        customers
+                            .filter(c => c && c.firstName && c.lastName && c.email)
+                            .map((customer, idx) => {
+
+                                return (
+                                    <tr key={customer.id} style={{ background: idx % 2 === 0 ? '#fafbfc' : '#fff' }}>
+                                        <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}>{customer.firstName}</td>
+                                        <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}>{customer.lastName}</td>
+                                        <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}>{customer.email}</td>
+                                        <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}>{customer.status}</td>
+                                        <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee', textAlign: 'center' }}>
+                                            <button style={{ marginRight: 6, padding: '4px 10px', background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 13, cursor: 'pointer' }} title="Edit" disabled>
+                                                <FontAwesomeIcon icon={faPenToSquare} />
+                                            </button>
+                                            <button style={{ marginRight: 6, padding: '4px 10px', background: '#d32f2f', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 13, cursor: 'pointer' }} title="Delete" disabled>
+                                                <FontAwesomeIcon icon={faTrash} />
+                                            </button>
+
+                                            <button
+                                                style={{ padding: '4px 10px', background: '#888', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 13, cursor: 'pointer' }}
+                                                title="Details"
+                                                onClick={() => navigate(`/admin/customers/${customer.id}`)}
+                                            >
+                                                <FontAwesomeIcon icon={faCircleInfo} />
+                                            </button>
+
+                                        </td>
+                                        <td style={{ padding: '10px 8px', borderBottom: '1px solid #eee' }}></td>
+                                    </tr>
+                                );
+                            })
                     }
                 </tbody>
             </table>

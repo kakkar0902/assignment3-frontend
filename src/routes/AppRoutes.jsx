@@ -11,6 +11,7 @@ import Books from '../pages/Books';
 //customer page components
 import CustomerTable from '../components/customers/CustomerTable';
 import AddCustomerForm from '../components/customers/AddCustomerForm';
+import CustomerDetails from '../components/customers/CustomerDetails';
 
 const AppRoutes = () => (
   <Routes>
@@ -24,6 +25,7 @@ const AppRoutes = () => (
       <Route path="customers" element={<Customers />}>
         <Route index element={<CustomerTable />} />
         <Route path="add" element={<AddCustomerForm />} />
+         <Route path=":customerId" element={<CustomerDetails />} />
       </Route>
       <Route path="subscriptions" element={<Subscriptions />} />
       <Route path="books" element={<Books />} />
