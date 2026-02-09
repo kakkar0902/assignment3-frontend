@@ -1,5 +1,14 @@
 {
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@example.com",
+      "password": "password"
+    }
+  ],
+
   "books": [
+    
     {
       "id": "1",
       "title": "The Edge of Tomorrow",
@@ -20,6 +29,7 @@
           "rating": 4,
           "date": "31-1-2022"
         },
+        
         {
           "user": "Elizabeth Nelson",
           "comment": "This is a review for The Last Embrace.",
