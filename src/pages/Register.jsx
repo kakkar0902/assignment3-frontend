@@ -1,14 +1,43 @@
 import { useForm } from "react-hook-form";
- 
+import { useMutation } from "@tanstack/react-query";
+ import { useState } from "react";
  
 const Register = () => {
+
+  const[jwt, setjwt] = useState(null);
+
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
  
   const onSubmit = (data) => {
     // Add registration logic here
-    alert(`Registered as ${data.firstName} ${data.lastName} (${data.email})`);
+    const { confirmPassword, ...dataToSubmit } = data;
+
+    console.log(dataToSubmit);
+    registerMutation.mutate(dataToSubmit);
   };
  
+  const registerMutation = useMutation({
+    mutationFn: async (data) => {
+      const response = await fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      })
+      //unsuccessful
+      if (!response.ok) throw new Error('Register failed');
+      //successful
+        return response.json()
+  },
+      onSuccess: (data) => {
+        console.log(data.accessToken)
+      },
+        onError: (errResponse) => {
+          console.error(JSON.stringify(errResponse));
+        }
+  });
+
+
+
   const password = watch('password', '');
  
   return (
