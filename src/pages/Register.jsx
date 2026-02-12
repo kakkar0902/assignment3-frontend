@@ -1,45 +1,47 @@
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
- import { useState } from "react";
- 
+import { useAuthContext } from "../context/AuthContext";
+
+
 const Register = () => {
 
-  const[jwt, setjwt] = useState(null);
-
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
- 
+
+  const { setToken } = useAuthContext();
+
   const onSubmit = (data) => {
     // Add registration logic here
-    const { confirmPassword, ...dataToSubmit } = data;
-
-    console.log(dataToSubmit);
+    const { confirmPassword, ...dataToSubmit } = data; // Exclude confirmPassword from submission
+    console.log('Registration data:', dataToSubmit);
     registerMutation.mutate(dataToSubmit);
   };
- 
+
   const registerMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch('http://localhost:3000/register', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+      const response = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: {'Content-type': 'application/json'},
         body: JSON.stringify(data)
-      })
-      //unsuccessful
-      if (!response.ok) throw new Error('Register failed');
-      //successful
-        return response.json()
-  },
-      onSuccess: (data) => {
-        console.log(data.accessToken)
-      },
-        onError: (errResponse) => {
-          console.error(JSON.stringify(errResponse));
-        }
+      });
+      // Unsuccessful response handling
+      if(!response.ok) throw new Error(response.statusText);
+
+      // Successful response handling
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Store jwt in context
+      setToken(data.accessToken)
+      console.log(data.accessToken);
+    },
+    onError: (err) => {
+      console.error(err);
+    }
   });
 
 
-
   const password = watch('password', '');
- 
+
   return (
     <div className="add-customer-form-container" style={{ maxWidth: 500, margin: '2rem auto', padding: '2rem', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Register</h2>
@@ -109,6 +111,5 @@ const Register = () => {
     </div>
   );
 };
- 
+
 export default Register;
- 
