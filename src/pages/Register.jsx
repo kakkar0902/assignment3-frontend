@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 
 const Register = () => {
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
-
-  const { setToken } = useAuthContext();
+  const { setToken } = useAuthContext()
+  const navigate = useNavigate()
 
   const onSubmit = (data) => {
     // Add registration logic here
@@ -33,9 +34,12 @@ const Register = () => {
       // Store jwt in context
       setToken(data.accessToken)
       console.log(data.accessToken);
+
+      //navigate somewhere else
+      navigate('/admin/home ')
     },
-    onError: (err) => {
-      console.error(err);
+    onError: (errResponse) => {
+      console.log(JSON.stringify(errResponse));
     }
   });
 

@@ -10,6 +10,7 @@ import Books from '../pages/Books';
 import CustomerDetails from '../components/customers/CustomerDetails';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
+import ProtectedRoute from './ProtectedRoute';
  
  
 //customer page components
@@ -31,11 +32,15 @@ const AppRoutes = () => (
       <Route path="user-roles" element={<UserRoles />} />
       <Route path="user-management" element={<UserManagement />} />
       <Route path="auto-response" element={<AutoResponse />} />
-      <Route path="customers" element={<Customers />}>
+     <Route path="customers" element={<Customers />}>
         <Route index element={<CustomerTable />} />
+        <Route element={<ProtectedRoute />}>
         <Route path="add" element={<AddCustomerForm />} />
-        <Route path=':customerId' element={<CustomerDetails />} />
-      </Route>
+        <Route path="details/:customerId" element={<CustomerDetails />} />
+        </Route>
+      </Route> 
+
+      
       <Route path="subscriptions" element={<Subscriptions />} />
       <Route path="books" element={<Books />} />
     </Route>
