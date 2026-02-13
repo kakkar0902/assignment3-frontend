@@ -1,23 +1,21 @@
-import { useQuery } from '@tanstack/react-query'
-import { Outlet } from 'react-router-dom';
+import { useQuery } from "@tanstack/react-query";
+import { Outlet } from "react-router-dom";
 
 const Customers = () => {
-
   const fetchCustomers = async () => {
-    const response = await fetch('http://localhost:3000/customers')
-    const data = await response.json()
-    return data
-  }
+    const response = await fetch("http://localhost:3000/customers");
+    const data = await response.json();
+    return data;
+  };
 
-  const { 
+  const {
     data: customers = [],
     isLoading,
-    error
-   } = useQuery({
+    error,
+  } = useQuery({
     queryKey: ["customerCache"],
-    queryFn: fetchCustomers
-  })
-
+    queryFn: fetchCustomers,
+  });
 
   return (
     <div>

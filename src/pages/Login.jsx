@@ -1,14 +1,47 @@
 import { useForm } from "react-hook-form";
- 
- 
+import { useAuthContext } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+
+
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
- 
+
+  const { setToken } = useAuthContext();
+
+  const navigate = useNavigate();
+
   const onSubmit = (data) => {
     // Add authentication logic here
-    alert(`Logged in as ${data.username}`);
+    loginMutation.mutate(data);
+    navigate('/admin/home');
   };
- 
+
+  const loginMutation = useMutation({
+    mutationFn: async (data) => {
+      const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: {'Content-type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+
+      // Unsuccessful response handling
+      if(!response.ok) throw new Error(response.statusText);
+
+      // Successful response handling
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Store jwt in context
+      setToken(data.accessToken)
+    },
+    onError: (err) => {
+      console.error(err);
+    }
+  })
+
+
+
   return (
     <div className="add-customer-form-container" style={{ maxWidth: 500, margin: '2rem auto', padding: '2rem', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login</h2>
@@ -42,6 +75,5 @@ const Login = () => {
     </div>
   );
 };
- 
+
 export default Login;
- 

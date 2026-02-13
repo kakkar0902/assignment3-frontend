@@ -1,63 +1,45 @@
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-//import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuthContext } from '../../context/AuthContext';
 
 const AddCustomerForm = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm()
   const queryClient = useQueryClient();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const { token } = useAuthContext();
 
 
-
   const mutation = useMutation({
-    mutationFn: async (newCustomer) => {
-      const response = await fetch("http://localhost:3000/customers", {
-        method: "POST",
+    mutationFn: async (data) => {
+      // Placeholder for mutation function to add a customer
+      const response = fetch('http://localhost:3000/customers', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-
-        body: JSON.stringify(newCustomer),
+        body: JSON.stringify(data)
       });
 
-      return response.json();
+      return (await response).json();
     },
-
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customerCache"] });
-      navigate("/admin/customers");
+      console.log('Mutation completed successfully');
+      queryClient.invalidateQueries({queryKey: ['customerCache']});
+      navigate('/admin/customers');
     },
-
     onError: (error) => {
-      console.error(error);
-    },
+      console.log('Error adding customer:', error);
+    }
   });
 
-  // const [firstName, setFirstName] = useState('')
-  // const [lastName, setLastName] = useState('')
-  // const [status, setStatus] = useState('active')
-
-  //function handleSubmit(event){
-  //event.preventDefault()
-
-  //send to api endpoint
-
-
-  //console.log({
-  // firstName,
-  // lastName,
-  // })
-  //}
-
-
-  function processData(data) {
-    console.log(data)
+  function processData(data){
+    console.log('Form Data Submitted: ', data);
 
     mutation.mutate(data);
+
   }
 
   return (
@@ -66,21 +48,22 @@ const AddCustomerForm = () => {
       <form onSubmit={handleSubmit(processData)}>
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="firstName" style={{ display: 'block', marginBottom: 4 }}>First Name</label>
-          <input {...register("firstName", { required: "First name is required" })} id='firstName' type="text" name="firstName" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }} />
-          {errors.firstName && <span style={{ color: 'red', fontSize: '10px' }}>{errors.firstName.message} </span>}
+          <input {...register('firstName', { required: true })} type="text" id="firstName" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }} />
+          {errors.firstName && <span style={{ color: 'red', fontSize: 10 }}>First name is required</span>}
         </div>
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="lastName" style={{ display: 'block', marginBottom: 4 }}>Last Name</label>
-          <input {...register("lastName", { required: "Last name is required" })} id='lastName' type="text" name="lastName" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }} />
-          {errors.lastName && <span style={{ color: 'red' }}>{errors.lastName.message} </span>}
+          <input {...register('lastName', { required: true })} type="text" id="lastName" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }} />
+          {errors.lastName && <span style={{ color: 'red', fontSize: 10 }}>Last name is required</span>}
         </div>
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="email" style={{ display: 'block', marginBottom: 4 }}>Email</label>
-          <input {...register("email")} type="email" id="email" name="email" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }} />
+          <input {...register('email', { required: true })} type="text" id="email" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }} />
+          {errors.email && <span style={{ color: 'red', fontSize: 10 }}>Email is required</span>}
         </div>
         <div style={{ marginBottom: '1.5rem' }}>
           <label htmlFor="status" style={{ display: 'block', marginBottom: 4 }}>Status</label>
-          <select {...register("status")} id="status" name="status" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }}>
+          <select {...register('status')} id="status" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc' }}>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
@@ -90,6 +73,7 @@ const AddCustomerForm = () => {
             Add Customer
           </button>
           <button
+            type="button"
             style={{ flex: 1, padding: 10, background: '#aaa', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', fontSize: 16, cursor: 'pointer' }}
             onClick={() => navigate(-1)}
           >

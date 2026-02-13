@@ -2885,6 +2885,13 @@
       "email": "joe123@example.com",
       "password": "$2a$10$ZtNNGzP2jgUbxjdr80kXPuqrZiiEevnKT4xPO3hFMNfVly80txsAC",
       "id": 4
+    },
+    {
+      "email": "kakka@gmail.com",
+      "password": "$2a$10$UTcaSXZJS8Z6M/MqrbRoOeXMF2RW4JPS8uA1kgVRtADEtU0QzUqn2",
+      "firstName": "sonia",
+      "lastName": "kakkar",
+      "id": 5
     }
   ]
 }
