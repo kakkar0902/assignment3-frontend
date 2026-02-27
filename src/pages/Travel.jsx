@@ -1,210 +1,142 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../Context/AuthContext";
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const fetchTravel = async () => {
-  const token = localStorage.getItem("token");
-
-  const response = await fetch(`${API_URL}/travel`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) throw new Error("Failed to fetch travel");
+  const response = await fetch(`${API_URL}/travel`);
+  if (!response.ok) throw new Error("Failed to fetch");
   return response.json();
 };
 
 const Travel = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { register, handleSubmit, reset, setValue } = useForm();
-  const [editingId, setEditingId] = useState(null);
+  const { token } = useAuthContext();
 
-  const { data = [], isLoading, error } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["travel"],
     queryFn: fetchTravel,
   });
 
-  const addMutation = useMutation({
-    mutationFn: async (newTravel) => {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(`${API_URL}/travel`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newTravel),
-      });
-
-      if (!response.ok) throw new Error("Failed to add");
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["travel"] });
-      reset();
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async (updatedTravel) => {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(`${API_URL}/travel/${editingId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedTravel),
-      });
-
-      if (!response.ok) throw new Error("Failed to update");
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["travel"] });
-      setEditingId(null);
-      reset();
-    },
-  });
-
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
-      const token = localStorage.getItem("token");
-
       const response = await fetch(`${API_URL}/travel/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) throw new Error("Failed to delete");
+      if (!response.ok) throw new Error("Delete failed");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["travel"] });
     },
   });
 
-  const onSubmit = (formData) => {
-    if (editingId) {
-      updateMutation.mutate(formData);
+  const handleProtected = (callback) => {
+    if (!token) {
+      navigate("/login");
     } else {
-      addMutation.mutate(formData);
+      callback();
     }
   };
 
-  const handleEdit = (item) => {
-    setEditingId(item.id);
-    setValue("destination", item.destination);
-    setValue("country", item.country);
-    setValue("rating", item.rating);
-    setValue("budget", item.budget);
-  };
+  if (isLoading) return <div className="p-6 text-gray-600">Loading...</div>;
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading data</p>;
+  if (error) return <div className="p-6 text-red-600">Error loading data</div>;
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
-        Travel Management
-      </h1>
-
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        style={{ display: "flex", gap: "10px", marginTop: "20px" }}
-      >
-        <input {...register("destination", { required: true })} placeholder="Destination" />
-        <input {...register("country", { required: true })} placeholder="Country" />
-        <input type="number" {...register("rating", { required: true })} placeholder="Rating" />
-        <input type="number" {...register("budget", { required: true })} placeholder="Budget" />
+    <div className="p-8 bg-gray-100 min-h-screen">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Travel Management</h1>
 
         <button
-          type="submit"
-          style={{
-            padding: "6px 12px",
-            background: editingId ? "#16a34a" : "#2563eb",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
+          onClick={() => handleProtected(() => navigate("/travel/add"))}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-md transition"
         >
-          {editingId ? "Update" : "Add"}
+          Add Travel
         </button>
-      </form>
+      </div>
 
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          marginTop: "20px",
-        }}
-      >
-        <thead>
-          <tr style={{ background: "#f3f4f6" }}>
-            <th style={{ padding: "10px", border: "1px solid #ddd" }}>Destination</th>
-            <th style={{ padding: "10px", border: "1px solid #ddd" }}>Country</th>
-            <th style={{ padding: "10px", border: "1px solid #ddd" }}>Rating</th>
-            <th style={{ padding: "10px", border: "1px solid #ddd" }}>Budget</th>
-            <th style={{ padding: "10px", border: "1px solid #ddd" }}>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.map((item) => (
-            <tr key={item.id}>
-              <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                {item.destination}
-              </td>
-              <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                {item.country}
-              </td>
-              <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                {item.rating}
-              </td>
-              <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                ${item.budget}
-              </td>
-              <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                <button
-                  onClick={() => handleEdit(item)}
-                  style={{
-                    padding: "6px 10px",
-                    background: "#2563eb",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    marginRight: "8px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Edit
-                </button>
-
-                <button
-                  onClick={() => deleteMutation.mutate(item.id)}
-                  style={{
-                    padding: "6px 10px",
-                    background: "#dc2626",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Delete
-                </button>
-              </td>
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <table className="min-w-full">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                Destination
+              </th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                Country
+              </th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                Rating
+              </th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                Budget
+              </th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody className="divide-y divide-gray-200">
+            {data.map((item) => {
+              const travelId = item._id || item.id;
+
+              return (
+                <tr key={travelId} className="hover:bg-gray-50 transition">
+                  <td className="px-6 py-4 text-gray-700">
+                    {item.destination}
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">{item.country}</td>
+                  <td className="px-6 py-4 text-gray-700">{item.rating}</td>
+                  <td className="px-6 py-4 text-gray-700">${item.budget}</td>
+                  <td className="px-6 py-4 space-x-2">
+                    <button
+                      onClick={() =>
+                        handleProtected(() =>
+                          navigate(`/travel/edit/${travelId}`),
+                        )
+                      }
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        handleProtected(() => deleteMutation.mutate(travelId))
+                      }
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
+                    >
+                      Delete
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        handleProtected(() =>
+                          navigate(`/travel/view/${travelId}`),
+                        )
+                      }
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-md text-sm"
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

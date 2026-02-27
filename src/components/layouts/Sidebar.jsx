@@ -8,10 +8,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = ({ isCollapsed, toggleSidebar }) => {
-  const sidebarItems = [
-    { href: '/admin/home', label: 'Dashboard', icon: faChartPie },
-    { href: '/admin/travel', label: 'Travel Data', icon: faBook }
-  ];
+  const sidebarItems = [  
+  { href: '/', label: 'Dashboard', icon: faChartPie },
+  { href: '/travel', label: 'Travel Data', icon: faBook }
+];
 
   return (
     <aside
