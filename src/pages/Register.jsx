@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { useAuthContext } from "../context/AuthContext";
+import { useAuthContext } from "../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -16,8 +16,9 @@ const Register = () => {
 
   const registerMutation = useMutation({
     mutationFn: async (data) => {
+    console.log(data)
       const response = await fetch(
-        "https://assignment2-restapi-kakkar0902.onrender.com/register",
+        "https://assignment2-restapi-kakkar0902.onrender.com/",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
