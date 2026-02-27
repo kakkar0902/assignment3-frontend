@@ -1,47 +1,31 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import App from "../App";
-import UserRoles from "../pages/UserRoles";
-import UserManagement from "../pages/UserManagement";
-import Dashboard from "../pages/Dashboard";
-import AutoResponse from "../pages/AutoResponse";
-import Customers from "../pages/Customers";
-import Subscriptions from "../pages/Subscriptions";
-import Books from "../pages/Books";
-import CustomerDetails from "../components/customers/CustomerDetails";
-import Register from "../pages/Register";
+import { Routes, Route } from "react-router-dom";
+import AdminLayout from "../components/layouts/AdminLayout";
 import Login from "../pages/Login";
-
-//customer page components
-import CustomerTable from "../components/customers/CustomerTable";
-import AddCustomerForm from "../components/customers/AddCustomerForm";
+import Register from "../pages/Register";
+import Dashboard from "../pages/Dashboard";
+import Travel from "../pages/Travel";
 import ProtectedRoute from "./ProtectedRoute";
 
-const AppRoutes = () => (
-  <Routes>
-    <Route path="/" element={<Navigate to="/admin/home" replace />} />
-    <Route path="/login" element={<App />}>
-      <Route index element={<Login />} />
-    </Route>
-    <Route path="/register" element={<App />}>
-      <Route index element={<Register />} />
-    </Route>
-    <Route path="/admin" element={<Navigate to="/admin/home" replace />} />
-    <Route path="/admin" element={<App />}>
-      <Route path="home" element={<Dashboard />} />
-      <Route path="user-roles" element={<UserRoles />} />
-      <Route path="user-management" element={<UserManagement />} />
-      <Route path="auto-response" element={<AutoResponse />} />
-      <Route path="customers" element={<Customers />}>
-        <Route index element={<CustomerTable />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="add" element={<AddCustomerForm />} />
-          <Route path=":customerId" element={<CustomerDetails />} />
-        </Route>
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="home" element={<Dashboard />} />
+        <Route path="travel" element={<Travel />} />
       </Route>
-      <Route path="subscriptions" element={<Subscriptions />} />
-      <Route path="books" element={<Books />} />
-    </Route>
-  </Routes>
-);
+    </Routes>
+  );
+};
 
 export default AppRoutes;

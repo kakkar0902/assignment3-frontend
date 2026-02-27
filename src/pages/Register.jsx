@@ -12,205 +12,90 @@ const Register = () => {
   } = useForm();
 
   const { setToken } = useAuthContext();
-
   const navigate = useNavigate();
-
-  const onSubmit = (data) => {
-    // Add registration logic here
-    const { confirmPassword, ...dataToSubmit } = data; // Exclude confirmPassword from submission
-    console.log("Registration data:", dataToSubmit);
-    registerMutation.mutate(dataToSubmit);
-    //navigate somewhere else
-    navigate("/admin/home");
-  };
 
   const registerMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch("http://localhost:3000/register", {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      // Unsuccessful response handling
-      if (!response.ok) throw new Error(response.statusText);
+      const response = await fetch(
+        "https://assignment2-restapi-kakkar0902.onrender.com/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
-      // Successful response handling
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+
       return response.json();
     },
     onSuccess: (data) => {
-      // Store jwt in context
-      setToken(data.accessToken);
-      console.log(data.accessToken);
+      setToken(data.token);
+      navigate("/admin/home");
     },
-    onError: (err) => {
-      console.error(err);
+    onError: (error) => {
+      console.error("Registration Error:", error.message);
     },
   });
+
+  const onSubmit = (formData) => {
+    const { confirmPassword, ...dataToSubmit } = formData;
+    registerMutation.mutate(dataToSubmit);
+  };
 
   const password = watch("password", "");
 
   return (
-    <div
-      className="add-customer-form-container"
-      style={{
-        maxWidth: 500,
-        margin: "2rem auto",
-        padding: "2rem",
-        background: "#fff",
-        borderRadius: 8,
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-      }}
-    >
-      <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>Register</h2>
+    <div style={{ maxWidth: 500, margin: "2rem auto" }}>
+      <h2>Register</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label
-            htmlFor="firstName"
-            style={{ display: "block", marginBottom: 4 }}
-          >
-            First Name
-          </label>
-          <input
-            {...register("firstName", { required: "First Name required" })}
-            id="firstName"
-            type="text"
-            style={{
-              width: "100%",
-              padding: 8,
-              borderRadius: 4,
-              border: "1px solid #ccc",
-            }}
-            autoComplete="given-name"
-          />
-          {errors.firstName && (
-            <span style={{ color: "red", fontSize: "10px" }}>
-              {errors.firstName.message}
-            </span>
-          )}
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label
-            htmlFor="lastName"
-            style={{ display: "block", marginBottom: 4 }}
-          >
-            Last Name
-          </label>
-          <input
-            {...register("lastName", { required: "Last Name required" })}
-            id="lastName"
-            type="text"
-            style={{
-              width: "100%",
-              padding: 8,
-              borderRadius: 4,
-              border: "1px solid #ccc",
-            }}
-            autoComplete="family-name"
-          />
-          {errors.lastName && (
-            <span style={{ color: "red", fontSize: "10px" }}>
-              {errors.lastName.message}
-            </span>
-          )}
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="email" style={{ display: "block", marginBottom: 4 }}>
-            Email
-          </label>
-          <input
-            {...register("email", {
-              required: "Email required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email format",
-              },
-            })}
-            id="email"
-            type="email"
-            style={{
-              width: "100%",
-              padding: 8,
-              borderRadius: 4,
-              border: "1px solid #ccc",
-            }}
-            autoComplete="email"
-          />
-          {errors.email && (
-            <span style={{ color: "red", fontSize: "10px" }}>
-              {errors.email.message}
-            </span>
-          )}
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label
-            htmlFor="password"
-            style={{ display: "block", marginBottom: 4 }}
-          >
-            Password
-          </label>
-          <input
-            {...register("password", { required: "Password required" })}
-            id="password"
-            type="password"
-            style={{
-              width: "100%",
-              padding: 8,
-              borderRadius: 4,
-              border: "1px solid #ccc",
-            }}
-            autoComplete="new-password"
-          />
-          {errors.password && (
-            <span style={{ color: "red", fontSize: "10px" }}>
-              {errors.password.message}
-            </span>
-          )}
-        </div>
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label
-            htmlFor="confirmPassword"
-            style={{ display: "block", marginBottom: 4 }}
-          >
-            Confirm Password
-          </label>
-          <input
-            {...register("confirmPassword", {
-              required: "Confirm Password required",
-              validate: (value) =>
-                value === password || "Passwords do not match",
-            })}
-            id="confirmPassword"
-            type="password"
-            style={{
-              width: "100%",
-              padding: 8,
-              borderRadius: 4,
-              border: "1px solid #ccc",
-            }}
-            autoComplete="new-password"
-          />
-          {errors.confirmPassword && (
-            <span style={{ color: "red", fontSize: "10px" }}>
-              {errors.confirmPassword.message}
-            </span>
-          )}
-        </div>
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: 10,
-            background: "#1976d2",
-            color: "#fff",
-            border: "none",
-            borderRadius: 4,
-            fontWeight: "bold",
-            fontSize: 16,
-            cursor: "pointer",
-          }}
-        >
-          Register
-        </button>
+
+        <input
+          {...register("firstName", { required: "First Name required" })}
+          placeholder="First Name"
+        />
+        {errors.firstName && <p>{errors.firstName.message}</p>}
+
+        <input
+          {...register("lastName", { required: "Last Name required" })}
+          placeholder="Last Name"
+        />
+        {errors.lastName && <p>{errors.lastName.message}</p>}
+
+        <input
+          {...register("email", {
+            required: "Email required",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Invalid email format",
+            },
+          })}
+          placeholder="Email"
+        />
+        {errors.email && <p>{errors.email.message}</p>}
+
+        <input
+          {...register("password", { required: "Password required" })}
+          type="password"
+          placeholder="Password"
+        />
+        {errors.password && <p>{errors.password.message}</p>}
+
+        <input
+          {...register("confirmPassword", {
+            required: "Confirm Password required",
+            validate: (value) =>
+              value === password || "Passwords do not match",
+          })}
+          type="password"
+          placeholder="Confirm Password"
+        />
+        {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
+
+        <button type="submit">Register</button>
       </form>
     </div>
   );

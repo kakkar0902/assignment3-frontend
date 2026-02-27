@@ -2,27 +2,15 @@ import SidebarItem from './SidebarItem';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChartPie,
-  faUsers,
-  faUsersCog,
-  faReply,
-  faBoxOpen,
   faArrowLeft,
   faArrowRight,
   faBook
 } from '@fortawesome/free-solid-svg-icons';
-import { href } from 'react-router-dom';
-
-
 
 const Sidebar = ({ isCollapsed, toggleSidebar }) => {
   const sidebarItems = [
     { href: '/admin/home', label: 'Dashboard', icon: faChartPie },
-    { href: '/admin/user-roles', label: 'User Roles', icon: faUsersCog },
-    { href: '/admin/user-management', label: 'User Management', icon: faUsers },
-    { href: '/admin/customers', label: 'Customers', icon: faUsers },
-    { href: '/admin/auto-response', label: 'Auto Response', icon: faReply },
-    { href: '/admin/subscriptions', label: 'Subscriptions', icon: faBoxOpen },
-    { href: '/admin/books', label: 'Books', icon: faBook }
+    { href: '/admin/travel', label: 'Travel Data', icon: faBook }
   ];
 
   return (
@@ -42,7 +30,6 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
         )}
       </button>
 
-      {/* Sidebar Navigation */}
       <nav className="mt-4">
         <ul>
           {sidebarItems.map((item) => (
